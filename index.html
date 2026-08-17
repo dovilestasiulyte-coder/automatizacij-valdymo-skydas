@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Automatizacijų Būsenos Apžvalga</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #FAF6F0;
+      --card-bg: #FFFFFF;
+      --primary-orange: #FF6B00;
+      --primary-orange-light: #FFF0E6;
+      --green-status: #10B981;
+      --green-status-light: #ECFDF5;
+      --text-main: #1F2937;
+      --text-muted: #6B7280;
+      --border-color: #F3EFEA;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* Top Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-title h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 6px;
+    }
+
+    .header-title p {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    .system-status-badge {
+      background-color: var(--card-bg);
+      padding: 10px 18px;
+      border-radius: 99px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary-orange);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      background-color: var(--primary-orange);
+      border-radius: 50%;
+    }
+
+    /* Stats Section */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-card {
+      background-color: var(--card-bg);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 160px;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      bottom: -30px;
+      right: -30px;
+      width: 130px;
+      height: 130px;
+      background: radial-gradient(circle, rgba(255,107,0,0.08) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-icon-wrapper {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background-color: var(--primary-orange-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-orange);
+      font-weight: 700;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    .stat-icon-wrapper svg {
+      width: 26px;
+      height: 26px;
+      stroke: var(--primary-orange);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--primary-orange);
+    }
+
+    .stat-bottom {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 16px;
+      text-align: right;
+    }
+
+    /* List Section */
+    .list-container {
+      background-color: var(--card-bg);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .list-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 16px 10px 42px;
+      border-radius: 12px;
+      border: 1px solid #E5E7EB;
+      background-color: #FAFAFA;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary-orange);
+      background-color: #FFFFFF;
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      stroke: var(--text-muted);
+    }
+
+    /* Workflow Cards */
+    .workflows-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .workflow-item {
+      background-color: #FAFAFA;
+      border: 1px solid #F3F3F3;
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .workflow-item:hover {
+      background-color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .workflow-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .workflow-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background-color: var(--primary-orange-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-orange);
+      font-weight: 700;
+      font-size: 10px;
+    }
+
+    .workflow-details h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .workflow-details p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .workflow-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* Status Badge */
+    .status-pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-pill.active {
+      background-color: var(--primary-orange-light);
+      color: var(--primary-orange);
+    }
+
+    .status-pill.inactive {
+      background-color: #F3F4F6;
+      color: var(--text-muted);
+    }
+
+    .status-pill .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .status-pill.active .pill-dot {
+      background-color: var(--primary-orange);
+    }
+
+    .status-pill.inactive .pill-dot {
+      background-color: var(--text-muted);
+    }
+
+    /* Toggle Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 28px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #E5E7EB;
+      transition: .3s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary-orange);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+
+    .menu-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 18px;
+      padding: 4px;
+    }
+
+    /* Loading state */
+    .loading-text {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-title">
+        <h1>Automatizacijų Būsenos Apžvalga</h1>
+        <p>Stebėkite visų automatizacijų būsenas realiu laiku</p>
+      </div>
+      <div class="system-status-badge">
+        <span class="status-dot"></span>
+        Sistemos būsena: Aktyvi
+      </div>
+    </header>
+
+    <!-- Stats Grid -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon-wrapper">
+            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            <span>n8n</span>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Iš viso automatizacijų</span>
+            <span class="stat-value" id="total-count">0</span>
+          </div>
+        </div>
+        <div class="stat-bottom">Visos sukurtos automatizacijos</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon-wrapper">
+            <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Įjungtos</span>
+            <span class="stat-value" id="active-count">0</span>
+          </div>
+        </div>
+        <div class="stat-bottom">Šiuo metu aktyvios</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon-wrapper">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Aktyvūs procesai</span>
+            <span class="stat-value" id="ratio-count">0/0</span>
+          </div>
+        </div>
+        <div class="stat-bottom">Vykdomi šiuo metu</div>
+      </div>
+    </section>
+
+    <!-- List Section -->
+    <section class="list-container">
+      <div class="list-header">
+        <h2>Automatizacijų sąrašas</h2>
+        <div class="search-box">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="search-input" placeholder="Ieškoti automatizacijos..." />
+        </div>
+      </div>
+
+      <div class="workflows-list" id="workflows-list">
+        <div class="loading-text">Kraunami duomenys...</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const GET_WEBHOOK_URL = 'https://primary-production-5e0de.up.railway.app/webhook/get-statuses';
+    const POST_WEBHOOK_URL = 'https://primary-production-5e0de.up.railway.app/webhook/toggle-status';
+
+    let workflowsData = [];
+
+    // 1. Nuskaityti duomenis (GET)
+    async function fetchStatuses() {
+      try {
+        const response = await fetch(GET_WEBHOOK_URL);
+        const data = await response.json();
+        
+        // Užtikriname, kad turime masyvą
+        workflowsData = Array.isArray(data) ? data : (data.items || [data]);
+        
+        renderWorkflows(workflowsData);
+        updateStats(workflowsData);
+      } catch (error) {
+        console.error('Klaida gaunant duomenis:', error);
+        document.getElementById('workflows-list').innerHTML = 
+          '<div class="loading-text" style="color: red;">Nepavyko užkrauti duomenų. Patikrinkite n8n webhook.</div>';
+      }
+    }
+
+    // 2. Vaizduoti korteles
+    function renderWorkflows(data) {
+      const listElement = document.getElementById('workflows-list');
+      listElement.innerHTML = '';
+
+      if (data.length === 0) {
+        listElement.innerHTML = '<div class="loading-text">Automatizacijų nerasta.</div>';
+        return;
+      }
+
+      data.forEach(item => {
+        const workflowId = item['Workflow ID'] || item.workflowId || item.id;
+        const name = item.Name || item.name || 'Automatizacija';
+        const rawStatus = (item.Status || item.status || 'inactive').toLowerCase();
+        const isActive = rawStatus === 'active';
+
+        const card = document.createElement('div');
+        card.className = 'workflow-item';
+        card.setAttribute('data-name', name.toLowerCase());
+
+        card.innerHTML = `
+          <div class="workflow-left">
+            <div class="workflow-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              <span>n8n</span>
+            </div>
+            <div class="workflow-details">
+              <h3>${name}</h3>
+              <p>Automatizacija: ${isActive ? 'Įjungta' : 'Išjungta'}</p>
+            </div>
+          </div>
+          <div class="workflow-right">
+            <div class="status-pill ${isActive ? 'active' : 'inactive'}">
+              <span class="pill-dot"></span>
+              ${isActive ? 'Įjungta' : 'Išjungta'}
+            </div>
+            <label class="switch">
+              <input type="checkbox" ${isActive ? 'checked' : ''} onchange="toggleAutomation('${workflowId}', ${isActive})">
+              <span class="slider"></span>
+            </label>
+            <button class="menu-btn">⋮</button>
+          </div>
+        `;
+
+        listElement.appendChild(card);
+      });
+    }
+
+    // 3. Atnaujinti skaitiklius
+    function updateStats(data) {
+      const total = data.length;
+      const activeCount = data.filter(item => {
+        const status = (item.Status || item.status || '').toLowerCase();
+        return status === 'active';
+      }).length;
+
+      document.getElementById('total-count').textContent = total;
+      document.getElementById('active-count').textContent = activeCount;
+      document.getElementById('ratio-count').textContent = `${activeCount}/${total}`;
+    }
+
+    // 4. Perjungti būseną (POST)
+    async function toggleAutomation(workflowId, currentStatus) {
+      const newStatus = currentStatus ? 'inactive' : 'active';
+
+      try {
+        await fetch(POST_WEBHOOK_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            workflowId: workflowId,
+            status: newStatus
+          })
+        });
+
+        // Po sėkmingo atnaujinimo vėl iškviesti GET
+        await fetchStatuses();
+      } catch (error) {
+        console.error('Klaida keičiant būseną:', error);
+        alert('Nepavyko pakeisti būsenos. Patikrinkite ryšį.');
+      }
+    }
+
+    // 5. Paieškos filtras
+    document.getElementById('search-input').addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase();
+      const items = document.querySelectorAll('.workflow-item');
+
+      items.forEach(item => {
+        const name = item.getAttribute('data-name');
+        if (name.includes(query)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+
+    // Užkrauti duomenis atidarius puslapį
+    fetchStatuses();
+  </script>
+</body>
+</html>
