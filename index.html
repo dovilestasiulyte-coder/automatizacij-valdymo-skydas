@@ -467,7 +467,11 @@
 
   <script>
     const GET_WEBHOOK_URL = 'https://primary-production-5e0de.up.railway.app/webhook/get-statuses';
-    const POST_WEBHOOK_URL = 'https://primary-production-5e0de.up.railway.app/webhook-test/toggle-status';
+    const POST_WEBHOOK_URL = 'https://primary-production-5e0de.up.railway.app/webhook/toggle-status';
+
+    const WORKFLOW_ID_MAP = {
+      WORKFLOW_ID_FORMA_1: 'aUy11pW3PankTz8H'
+    };
 
     let workflowsData = [];
 
@@ -500,7 +504,8 @@
       }
 
       data.forEach(item => {
-        const workflowId = item['Workflow ID'] || item.workflowId || item.id;
+        const rawWorkflowId = item['Workflow ID'] || item.workflowId || item.id;
+        const workflowId = WORKFLOW_ID_MAP[rawWorkflowId] || rawWorkflowId;
         const name = item.Name || item.name || 'Automatizacija';
         const rawStatus = (item.Status || item.status || 'inactive').toLowerCase();
         const isActive = rawStatus === 'active';
